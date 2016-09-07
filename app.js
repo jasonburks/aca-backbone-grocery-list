@@ -6,11 +6,14 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
 const routes = require('./routes/index');
-const users = require('./routes/users');
+const grocery = require('./routes/grocery');
 
 // Set up mongoose
 const mongoose = require('mongoose');
 // You need to connect to your MongoDB here
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost/grocery-list');
+
 
 const app = express();
 
@@ -27,13 +30,19 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/grocery', grocery);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   const err = new Error('Not Found');
   err.status = 404;
   next(err);
+});
+
+// Catch any route that doesn't match and render the index
+app.get('*', function(req, res, next) {
+  return res.render('index');
 });
 
 // error handlers
@@ -43,7 +52,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    return res.json({
       message: err.message,
       error: err
     });
@@ -54,7 +63,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
+  res.json({
     message: err.message,
     error: {}
   });

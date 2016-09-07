@@ -1,3 +1,23 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+ul {
+  list-style: none;
+}
+
+.grocery-info {
+  font-size: 14px;
+  padding: 10px;
+  text-decoration: none;
+
+
+  &.activated {
+    text-decoration: line-through;
+  }
+
+  label {
+    font-size: 15px;
+    font-weight: bold;
+  }
+}
